@@ -1,0 +1,50 @@
+\documentclass[border=18pt]{standalone}
+\usepackage[european, straightvoltages]{circuitikz}
+\usetikzlibrary{calc}
+
+\begin{document}
+\begin{circuitikz}[scale=1.05, transform shape]
+
+\draw (0,5) to[V, v=$3.3\,\mathrm{V}$, invert] (0,0) node[ground]{};
+\draw (0,5) -- (1.5,5);
+\draw (1.5,5) to[R, l_=$100\,\mathrm{k}$] (1.5,2.5) coordinate (Nbias);
+\draw (Nbias) to[R, l_=$100\,\mathrm{k}$] (1.5,0) node[ground]{};
+\draw (Nbias) node[circ]{};
+\node[below right=1pt] at (Nbias) {\small $1{,}65\,\mathrm{V}$};
+\draw (Nbias) -- (3.2,2.5);
+\draw (3.2,2.5) to[C, l=$10\,\mu\mathrm{F}$] (3.2,0) node[ground]{};
+
+\node[op amp, anchor=+] (OA) at (9, 2.5) {};
+\draw (Nbias) -- (OA.+);
+\draw (OA.-) to[R, l_=$1\,\mathrm{k}$] ++(-3.4,0) coordinate (GuitIn);
+\node[left=2pt, align=right] at (GuitIn) {\textbf{Jack IN} \\ \small (guitare 6.3~mm)};
+
+\draw (OA.out) -- ++(0.5,0) coordinate (Vout);
+\coordinate (topL) at (OA.- |- 0,5.5);
+\coordinate (topR) at (Vout  |- 0,5.5);
+\draw (OA.-) -- (topL);
+\draw (topL) to[R, l=$47\,\mathrm{k}$] (topR);
+\draw (topR) -- (Vout);
+
+\draw (Vout) to[R, l=$1\,\mathrm{k}$] ++(2.0,0) coordinate (Nfilt);
+\draw (Nfilt) to[C, l=$100\,\mathrm{nF}$] ++(0,-2.5) node[ground]{};
+\draw (Nfilt) -- ++(1.5,0) node[right]{\small ADC GPIO\,34};
+
+% Branche DAC : descend à y=-3, part à droite sur 6 unités (bien au-delà du filtre)
+\draw (Vout) -- ++(0,-3.0) coordinate (dacNode);
+\node[left=2pt] at (dacNode) {\small DAC GPIO\,25};
+\draw (dacNode) to[R, l=$1\,\mathrm{k}$] ++(6.0,0) coordinate (jackOut);
+% Jack OUT avec label sur 2 lignes, au-dessus de la ligne "interface numérique"
+\node[above right=2pt, align=left] at (jackOut) {\textbf{Jack OUT} \\ \small (vers ampli 6.3~mm)};
+\draw (jackOut) -- ++(0,-0.6) node[ground]{};
+
+\draw (1.5,-2.0) to[nos, l=Footswitch] (5.5,-2.0)
+      node[right]{\small GPIO\,2 (pull-up interne)};
+\draw (1.5,-2.0) node[ground]{};
+
+% Séparateur bien en dessous de la branche DAC
+\draw[dashed, gray, thin] (-0.3,-0.5) -- (17.5,-0.5)
+  node[right, gray, font=\footnotesize]{— interface numérique —};
+
+\end{circuitikz}
+\end{document}

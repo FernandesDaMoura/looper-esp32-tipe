@@ -1,0 +1,7 @@
+fs_hz,latence_simulee_us,latence_mesuree_us,ecart_us,note
+8000,125.0,128.4,3.4,nominal
+11025,90.7,93.8,3.1,nominal
+16000,62.5,65.1,2.6,nominal
+22050,45.4,51.3,5.9,aberration_thermique
+32000,31.3,33.6,2.3,nominal
+44100,22.7,25.1,2.4,nominal
